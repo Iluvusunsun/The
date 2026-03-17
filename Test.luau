@@ -3,15 +3,14 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
-local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
 local Window = WindUI:CreateWindow({
-    Title = "Quality x Hub | Blox furit",
+    Title = "Quality x Hub | Blox fruit",
     Icon = "rbxassetid://138614699274576",
-    Author = "Made​by Quality.Team",
+    Author = "Made by Quality.Team",
     Folder = "Mybabeee",
     Size = UDim2.fromOffset(580, 460),
     MinSize = Vector2.new(560, 350),
@@ -39,12 +38,17 @@ local ToggleBtn = Instance.new("ImageButton")
 
 ScreenGui.Name = "WindUI_Toggle"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = CoreGui
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
 ToggleBtn.Position = UDim2.new(0, 20, 0.5, -25)
-ToggleBtn.BackgroundTransparency = 1
-ToggleBtn.Image = "rbxassetid://138614699274576" 
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.BackgroundTransparency = 0.2
+ToggleBtn.Image = "rbxassetid://138614699274576"
+ToggleBtn.ScaleType = Enum.ScaleType.Fit
+ToggleBtn.ZIndex = 999
 ToggleBtn.Active = true
 ToggleBtn.Draggable = true
 ToggleBtn.Parent = ScreenGui
@@ -87,16 +91,21 @@ UserInputService.InputBegan:Connect(function(input, gp)
     end
 end)
 
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1)
+    if not ScreenGui.Parent then
+        ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+    end
+end)
 
 if not LocalPlayer.Character then
-LocalPlayer.CharacterAdded:Wait()
+    LocalPlayer.CharacterAdded:Wait()
 end
 
-local Players = game:GetService("Players")
-local Player = game:GetService('Players').LocalPlayer;
-local Enemies = workspace:WaitForChild("Enemies");
-local WorldOrigin = workspace:WaitForChild("_WorldOrigin");
-local Locations = WorldOrigin:WaitForChild("Locations");
+local Player = LocalPlayer
+local Enemies = workspace:WaitForChild("Enemies")
+local WorldOrigin = workspace:WaitForChild("_WorldOrigin")
+local Locations = WorldOrigin:WaitForChild("Locations")
 
 local Game_Setting   = Window:Tab({Title = "Game Setting", Icon = "config"})
 local Main_Farm      = Window:Tab({Title = "Main Farm", Icon = "farm"})
@@ -113,4 +122,3 @@ local Main_Stat      = Window:Tab({Title = "Stats", Icon = "bar-chart"})
 local Main_Shop      = Window:Tab({Title = "Shop", Icon = "shopping-cart"})
 local Misc           = Window:Tab({Title = "Misc", Icon = "menu"})
 local SaveManagerTab = Window:Tab({Title = "Save and UI", Icon = "save"})
-
