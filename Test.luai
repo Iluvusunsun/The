@@ -1,0 +1,375 @@
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local UserInputService = game:GetService("UserInputService")
+
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
+local Window = WindUI:CreateWindow({
+    Title = "Quality x Hub | Blox fruit",
+    Icon = "rbxassetid://138614699274576",
+    Author = "Made by Quality.Team",
+    Folder = "Mybabeee",
+    Size = UDim2.fromOffset(580, 460),
+    MinSize = Vector2.new(560, 350),
+    MaxSize = Vector2.new(850, 560),
+    Transparent = true,
+    Theme = "Dark",
+    Resizable = true,
+    SideBarWidth = 200,
+    BackgroundImageTransparency = 0.42,
+    HideSearchBar = true,
+    ScrollBarEnabled = false,
+    User = {
+        Enabled = true,
+        Anonymous = false,
+        Name = LocalPlayer.Name,
+        Image = "rbxthumb://type=AvatarHeadShot&id=" .. LocalPlayer.UserId,
+        Callback = function() end,
+    },
+})
+
+Window:EditOpenButton({ Enabled = false })
+
+local ScreenGui = Instance.new("ScreenGui")
+local ToggleBtn = Instance.new("ImageButton")
+
+ScreenGui.Name = "WindUI_Toggle"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0, 20, 0.5, -25)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.BackgroundTransparency = 0.2
+ToggleBtn.Image = "rbxassetid://138614699274576"
+ToggleBtn.ScaleType = Enum.ScaleType.Fit
+ToggleBtn.ZIndex = 999
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+ToggleBtn.Parent = ScreenGui
+
+local opened = true
+
+local function toggle()
+    opened = not opened
+    if Window.UI then
+        Window.UI.Enabled = opened
+    else
+        Window:Toggle()
+    end
+end
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    ToggleBtn:TweenSize(
+        UDim2.new(0, 56, 0, 56),
+        Enum.EasingDirection.Out,
+        Enum.EasingStyle.Quad,
+        0.12,
+        true,
+        function()
+            ToggleBtn:TweenSize(
+                UDim2.new(0, 50, 0, 50),
+                Enum.EasingDirection.Out,
+                Enum.EasingStyle.Quad,
+                0.12,
+                true
+            )
+        end
+    )
+    toggle()
+end)
+
+UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if input.KeyCode == Enum.KeyCode.T then
+        toggle()
+    end
+end)
+
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1)
+    if not ScreenGui.Parent then
+        ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+    end
+end)
+
+if not LocalPlayer.Character then
+    LocalPlayer.CharacterAdded:Wait()
+end
+
+local Player = LocalPlayer
+local Enemies = workspace:WaitForChild("Enemies")
+local WorldOrigin = workspace:WaitForChild("_WorldOrigin")
+local Locations = WorldOrigin:WaitForChild("Locations")
+
+local Game_Setting   = Window:Tab({Title = "Game Setting", Icon = "config"})
+local Main_Farm      = Window:Tab({Title = "Main Farm", Icon = "farm"})
+local Subs_Farm      = Window:Tab({Title = "Subs Farm", Icon = "layers"})
+local Main_Quest     = Window:Tab({Title = "Main Quest", Icon = "book"})
+local Subs_Quest     = Window:Tab({Title = "Subs Quest", Icon = "book-open"})
+local Sea_Event      = Window:Tab({Title = "Sea Event", Icon = "waves"})
+local Main_Island    = Window:Tab({Title = "Island", Icon = "map"})
+local Main_Race      = Window:Tab({Title = "Race", Icon = "zap"})
+local Main_Raid      = Window:Tab({Title = "Raid", Icon = "swords"})
+local Main_Bounty    = Window:Tab({Title = "Bounty", Icon = "target"})
+local Main_Teleport  = Window:Tab({Title = "Location", Icon = "map-pin"})
+local Main_Stat      = Window:Tab({Title = "Stats", Icon = "bar-chart"})
+local Main_Shop      = Window:Tab({Title = "Shop", Icon = "shopping-cart"})
+local Misc           = Window:Tab({Title = "Misc", Icon = "menu"})
+local SaveManagerTab = Window:Tab({Title = "Save and UI", Icon = "save"})
+
+
+Main_Farm:Dropdown({
+    Title = "Select Weapon",
+    Values = {"Melee","Sword","Gun","Blox Fruit"},
+    Default = Selected_Weapon or "Melee",
+    Callback = function(v)
+        Selected_Weapon = v
+    end
+})
+
+Main_Farm:Dropdown({
+    Title = "Select Mode",
+    Values = {"Above","Behind"},
+    Default = Selected_Mode_Farm or "Above",
+    Callback = function(v)
+        Selected_Mode_Farm = v
+    end
+})
+
+Main_Farm:Slider({
+    Title = "Distance",
+    Step = 1,
+    Value = {Min = 1, Max = 100, Default = Distance_Func or 20},
+    Callback = function(v)
+        Distance_Func = v
+    end
+})
+
+Main_Farm:Slider({
+    Title = "Tween Speed",
+    Step = 10,
+    Value = {Min = 50, Max = 500, Default = TweenSpeed_Func or 250},
+    Callback = function(v)
+        TweenSpeed_Func = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Fast Attack",
+    Default = AutoAttacks or false,
+    Callback = function(v)
+        AutoAttacks = v
+    end
+})
+
+Main_Farm:Slider({
+    Title = "Bring Distance",
+    Step = 10,
+    Value = {Min = 50, Max = 500, Default = BringDistance or 250},
+    Callback = function(v)
+        BringDistance = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Bring Monster",
+    Default = BringMobs or false,
+    Callback = function(v)
+        BringMobs = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Auto Click",
+    Default = Auto_Click_Func or false,
+    Callback = function(v)
+        Auto_Click_Func = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Ken Haki",
+    Default = Ken_Haki_Func or false,
+    Callback = function(v)
+        Ken_Haki_Func = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Buso Haki",
+    Default = Buso_Haki_Func or false,
+    Callback = function(v)
+        Buso_Haki_Func = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Spawn Point",
+    Default = Spawn_Point_Func or false,
+    Callback = function(v)
+        Spawn_Point_Func = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Disable Damage & Audio",
+    Default = AudioDamage_Func or false,
+    Callback = function(v)
+        AudioDamage_Func = v
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Disable Notification",
+    Default = Hide_Notification_Func or false,
+    Callback = function(v)
+        Hide_Notification_Func = v
+    end
+})
+
+Main_Farm:Button({
+    Title = "Reset Character",
+    Callback = function()
+        game.Players.LocalPlayer.Character.Head:Destroy()
+    end
+})
+
+Main_Farm:Button({
+    Title = "Destroy All Effect",
+    Callback = function()
+        for _,v in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+            if v:IsA('ParticleEmitter') then v:Destroy() end
+        end
+        for _,v in pairs(workspace:GetDescendants()) do
+            if v:IsA('ParticleEmitter') then v:Destroy() end
+        end
+    end
+})
+
+--// FARM
+
+Main_Farm:Toggle({
+    Title = "Auto Farm (Quest)",
+    Default = Level_Quest_Func or false,
+    Callback = function(v)
+        Level_Quest_Func = v
+        Main_Module.StopTween(v)
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Auto Farm (No Quest)",
+    Default = Level_No_Quest_Func or false,
+    Callback = function(v)
+        Level_No_Quest_Func = v
+        Main_Module.StopTween(v)
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Auto Farm (Nearest)",
+    Default = Nearest_Farm_Func or false,
+    Callback = function(v)
+        Nearest_Farm_Func = v
+        Main_Module.StopTween(v)
+    end
+})
+
+Main_Farm:Toggle({
+    Title = "Auto Farm Hearts",
+    Default = Hearts_Farm_Func or false,
+    Callback = function(v)
+        Hearts_Farm_Func = v
+        Main_Module.StopTween(v)
+    end
+})
+
+task.spawn(function()
+    while task.wait() do
+        if Selected_Mode_Farm == "Above" then
+            Farm_Mode = CFrame.new(0, Distance_Func, 0)
+        elseif Selected_Mode_Farm == "Behind" then
+            Farm_Mode = CFrame.new(0, 1, Distance_Func)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        AutoShoot = AutoAttacks
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if Auto_Click_Func then
+            Main_Module.Click(0.3)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if Ken_Haki_Func then
+            if not game.Players.LocalPlayer.Character:FindFirstChild("Highlight") then
+                game:service('VirtualInputManager'):SendKeyEvent(true,"E",false,game)
+                task.wait(.1)
+                game:service('VirtualInputManager'):SendKeyEvent(false,"E",false,game)
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if Buso_Haki_Func then
+            if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if Spawn_Point_Func then
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if AudioDamage_Func then
+            for _,v in pairs(workspace["_WorldOrigin"]:GetChildren()) do
+                if v.Name == "Sounds" then
+                    for _,v2 in pairs(v:GetChildren()) do
+                        if v2:IsA("Part") then v2:Destroy() end
+                    end
+                end
+                if table.find({"CurvedRing","SlashHit","SwordSlash","SlashTail","DamageCounter"}, v.Name) then
+                    v:Destroy()
+                end
+            end
+            game:GetService("ReplicatedStorage").Assets.GUI.DamageCounter.Size = UDim2.new(0,0,0,0)
+        else
+            game:GetService("ReplicatedStorage").Assets.GUI.DamageCounter.Size = UDim2.new(11,0,4,0)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if Hide_Notification_Func then
+            for _,v in pairs(game.Players.LocalPlayer.PlayerGui.Notifications:GetChildren()) do
+                v:Destroy()
+            end
+        end
+    end
+end)
